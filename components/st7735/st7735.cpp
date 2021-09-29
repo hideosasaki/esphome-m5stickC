@@ -81,9 +81,9 @@ namespace esphome
     static const uint8_t PROGMEM
         Rcmd1[] = {                         // Init for 7735R, part 1 (red or green tab)
             18,                             // 15 commands in list:
-            ST7735_SWRESET, TFT_INIT_DELAY, //  1: Software reset, 0 args, w/delay
+            ST7735_SWRESET, ST_CMD_DELAY, //  1: Software reset, 0 args, w/delay
             150,                            //     150 ms delay
-            ST7735_SLPOUT, TFT_INIT_DELAY,  //  2: Out of sleep mode, 0 args, w/delay
+            ST7735_SLPOUT, ST_CMD_DELAY,  //  2: Out of sleep mode, 0 args, w/delay
             120,                            //     500 ms delay
             ST7735_FRMCTR1, 3,              //  3: Frame rate ctrl - normal mode, 3 args:
             0x05, 0x3C, 0x3C,               //     Rate = fosc/(1x2+40) * (LINE+2C+2D)
@@ -135,9 +135,9 @@ namespace esphome
             4,                                                                                                                            //  4 commands in list:
             ST7735_GMCTRP1, 16,                                                                                                           //  1: 16 args, no delay:
             0x0D, 0x0C, 0x0C, 0x0E, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x09, 0x23, 0x31, 0x00, 0x0C, 0x03, 0x1A, ST7735_GMCTRN1, 16,           //  2: 16 args, no delay:
-            0x0A, 0x05, 0x06, 0x07, 0x08, 0x01, 0x00, 0x00, 0x00, 0x05, 0x20, 0x2E, 0x00, 0x0A, 0x01, 0x1A, ST7735_NORON, TFT_INIT_DELAY, //  3: Normal display on, no args, w/delay
+            0x0A, 0x05, 0x06, 0x07, 0x08, 0x01, 0x00, 0x00, 0x00, 0x05, 0x20, 0x2E, 0x00, 0x0A, 0x01, 0x1A, ST7735_NORON, ST_CMD_DELAY, //  3: Normal display on, no args, w/delay
             10,                                                                                                                           //     10 ms delay
-            ST7735_DISPON, TFT_INIT_DELAY,                                                                                                //  4: Main screen turn on, no args w/delay
+            ST7735_DISPON, ST_CMD_DELAY,                                                                                                //  4: Main screen turn on, no args w/delay
             100};                                                                                                                         //     100 ms delay
 
     static const char *TAG = "st7735";
@@ -269,7 +269,7 @@ namespace esphome
       if (x >= this->get_width_internal() || x < 0 || y >= this->get_height_internal() || y < 0)
         return;
 
-      auto color565 = color.to_rgb_565();
+      auto color565 = display::ColorUtil::color_to_565(color);
       uint16_t pos = (x + y * this->get_width_internal()) * 2;
       this->buffer_[pos++] = (color565 >> 8) & 0xff;
       this->buffer_[pos] = color565 & 0xff;
